@@ -12,6 +12,7 @@ const modelNotExisted = (app, model) =>
   });
 
 // wrapper of dynamic
+// 每个 component 中都会注入一个 routerData 属性
 const dynamicWrapper = (app, models, component) => {
   // () => require('module')
   // transformed by babel-plugin-dynamic-import-node-sync
@@ -24,6 +25,7 @@ const dynamicWrapper = (app, models, component) => {
     });
     return props => {
       if (!routerDataCache) {
+        // 被拍平之后的 路由信息
         routerDataCache = getRouterData(app);
       }
       return createElement(component().default, {
@@ -67,8 +69,12 @@ function getFlatMenuData(menus) {
   return keys;
 }
 
+// 返回拍平之后的路由数据字典，key 为 path，value 的 key 包括：name, (icon), path, component, authority, hideInBreadcrumb
 export const getRouterData = app => {
   const routerConfig = {
+    // 这里一共使用了两个 layout：LoadingPage和UserLayout，layouts 实际上也是一种 component
+    // ['user', 'login', 'setting'] 表示这个页面会使用到的 model
+    // 这里并没有处理重定向问题
     '/': {
       component: dynamicWrapper(app, ['user', 'login', 'setting'], () =>
         import('../layouts/LoadingPage')
@@ -170,6 +176,7 @@ export const getRouterData = app => {
     '/user/register-result': {
       component: dynamicWrapper(app, [], () => import('../routes/User/RegisterResult')),
     },
+
     '/account/center': {
       component: dynamicWrapper(app, ['list', 'user', 'project'], () =>
         import('../routes/Account/Center/Center')
@@ -230,6 +237,7 @@ export const getRouterData = app => {
     if (menuKey) {
       menuItem = menuData[menuKey];
     }
+    // routerConfig 和 menuData 进行 merge
     let router = routerConfig[path];
     // If you need to configure complex parameter routing,
     // https://github.com/ant-design/ant-design-pro-site/blob/master/docs/router-and-nav.md#%E5%B8%A6%E5%8F%82%E6%95%B0%E7%9A%84%E8%B7%AF%E7%94%B1%E8%8F%9C%E5%8D%95

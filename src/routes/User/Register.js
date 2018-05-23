@@ -33,13 +33,15 @@ export default class Register extends Component {
     help: '',
     prefix: '86',
   };
-
+  // 每次页面更新这里都会检查是否注册成功，如果成功则跳转到
   componentDidUpdate() {
     const account = this.props.form.getFieldValue('mail');
     if (this.props.register.status === 'ok') {
+      // 基于 action 进行页面跳转，参见：https://github.com/dvajs/dva-knowledgemap#%E5%9F%BA%E4%BA%8E-action-%E8%BF%9B%E8%A1%8C%E9%A1%B5%E9%9D%A2%E8%B7%B3%E8%BD%AC
       this.props.dispatch(
         routerRedux.push({
           pathname: '/user/register-result',
+          // 携带了一个参数在 location.state 中
           state: {
             account,
           },

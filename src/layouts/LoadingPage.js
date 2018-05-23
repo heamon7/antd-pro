@@ -9,6 +9,8 @@ import { getMenuData } from '../common/menu';
  */
 
 const MenuData = getMenuData();
+
+// 返回所有需要重定向的页面，如果 url 访问的是一级菜单，则重定向到该菜单的第一个二级子菜单，如果有三级子菜单也是类似
 const getRedirectData = () => {
   const redirectData = [];
   const getRedirect = item => {
@@ -27,6 +29,7 @@ const getRedirectData = () => {
   MenuData.forEach(getRedirect);
   return redirectData;
 };
+
 const redirectData = getRedirectData();
 
 class LoadingPage extends PureComponent {
@@ -40,6 +43,7 @@ class LoadingPage extends PureComponent {
         isMobile: mobile,
       });
     });
+    // 挂载完成之后，马上获取用户当前状态(此时还处于 loading 状态)
     this.props.dispatch({
       type: 'user/fetchCurrent',
     });
@@ -63,6 +67,7 @@ class LoadingPage extends PureComponent {
     });
   }
   render() {
+    // 如果还在加载，则返回一个加载页面
     if (this.state.loading) {
       return (
         <div
@@ -78,6 +83,7 @@ class LoadingPage extends PureComponent {
         </div>
       );
     }
+    // 如果加载完成，则返回 BasicLayout
     return (
       <BasicLayout
         isMobile={this.state.isMobile}

@@ -134,6 +134,7 @@ function getRenderArr(routes) {
  * @param {routerData} routerData
  */
 export function getRoutes(path, routerData) {
+  // 过滤routerData.keys 中那些和 path 不同，但包含 path 的 keys
   let routes = Object.keys(routerData).filter(
     routePath => routePath.indexOf(path) === 0 && routePath !== path
   );

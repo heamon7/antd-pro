@@ -69,6 +69,7 @@ class BasicLayout extends React.PureComponent {
   }
   getPageTitle() {
     const { routerData, location } = this.props;
+    console.log('location' + JSON.stringify(location));
     const { pathname } = location;
     let title = 'Ant Design Pro';
     let currRouterData = null;
@@ -129,6 +130,7 @@ class BasicLayout extends React.PureComponent {
 
   render() {
     const { isMobile, redirectData, routerData, match } = this.props;
+    console.log('match' + JSON.stringify(match));
     const isTop = this.props.layout === 'topmenu';
     const bashRedirect = this.getBashRedirect();
     const myRedirectData = redirectData || [];

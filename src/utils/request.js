@@ -2,6 +2,7 @@ import fetch from 'dva/fetch';
 import { notification } from 'antd';
 import { routerRedux } from 'dva/router';
 import store from '../index';
+import token from './token';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -21,6 +22,7 @@ const codeMessage = {
   504: '网关超时。',
 };
 function checkStatus(response) {
+  console.log(response);
   if (response.status >= 200 && response.status < 300) {
     return response;
   }
@@ -35,6 +37,12 @@ function checkStatus(response) {
   throw error;
 }
 
+function buildAuthorization() {
+  const tokenVal = token.get();
+
+  return tokenVal !== '' ? `Bearer ${tokenVal}` : '';
+}
+
 /**
  * Requests a URL, returning a promise.
  *
@@ -43,10 +51,12 @@ function checkStatus(response) {
  * @return {object}           An object containing either "data" or "err"
  */
 export default function request(url, options) {
+  console.log('requesting: ' + url);
   const defaultOptions = {
     credentials: 'include',
   };
   const newOptions = { ...defaultOptions, ...options };
+
   if (newOptions.method === 'POST' || newOptions.method === 'PUT') {
     if (!(newOptions.body instanceof FormData)) {
       newOptions.headers = {
@@ -64,6 +74,11 @@ export default function request(url, options) {
     }
   }
 
+  newOptions.headers = {
+    Authorization: buildAuthorization(),
+    ...newOptions.headers,
+  };
+  // newOptions.body = JSON.stringify(newOptions.body);
   return fetch(url, newOptions)
     .then(checkStatus)
     .then(response => {
